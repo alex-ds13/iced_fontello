@@ -1,7 +1,7 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/example-icons.toml
-// f4128e932b53ccb52ba93153f13439077cb9e7a031c1a61407f9449dfa949718
-use iced::widget::{text, Text};
+// 68dd4f29a36e0aea51db86d2af449aafcea27ea520f6a16cebb0c478b3325faf
+use iced::widget::{Text, text};
 
 pub const FONT: &[u8] = include_bytes!("../fonts/example-icons.ttf");
 
