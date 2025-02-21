@@ -10,7 +10,6 @@ keywords = ["gui", "ui", "graphics", "interface", "widgets"]
 rust-version = "1.92"
 
 [dependencies]
-rand = "0.8.5"
 reqwest = { version = "0.13", features = ["blocking", "json", "multipart"] }
 sha2 = "0.10"
 serde = { version = "1", features = ["derive"] }
