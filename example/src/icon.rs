@@ -1,7 +1,6 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/example-icons.toml
 // d24460a00249b2acd0ccc64c3176452c546ad12d1038974e974d7bdb4cdb4a8f
-use iced::Font;
 use iced::widget::{Text, text};
 
 pub const FONT: &[u8] = include_bytes!("../fonts/example-icons.ttf");
@@ -19,5 +18,5 @@ pub fn trash<'a>() -> Text<'a> {
 }
 
 fn icon(codepoint: &str) -> Text<'_> {
-    text(codepoint).font(Font::with_name("example-icons"))
+    text(codepoint).font("example-icons")
 }

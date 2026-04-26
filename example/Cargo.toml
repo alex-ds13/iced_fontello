@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-iced = "0.14"
+iced.git = "https://github.com/iced-rs/iced.git"
+iced.rev = "4255f613b887c3362214edd128acb8d2722bd0de"
 
 [build-dependencies]
 iced_fontello.workspace = true 

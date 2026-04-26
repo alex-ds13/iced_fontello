@@ -70,7 +70,7 @@
 //! }
 //!
 //! fn icon<'a>(codepoint: &'a str) -> Text<'a> {
-//!     text(codepoint).font(Font::with_name("example-icons"))
+//!     text(codepoint).font("example-icons")
 //! }
 //! ```
 //!
@@ -281,7 +281,6 @@ pub fn build(path: impl AsRef<Path>) -> Result<(), Error> {
         "// Generated automatically by iced_fontello at build time.\n\
          // Do not edit manually. Source: {source}\n\
          // {hash}\n\
-         use iced::Font;\n\
          use iced::widget::{{Text, text}};\n\n\
          pub const FONT: &[u8] = include_bytes!(\"{path}\");\n\n",
         source = relative_path.join(path.with_extension("toml")).display(),
@@ -301,7 +300,7 @@ pub fn {name}<'a>() -> Text<'a> {{
     module.push_str(&format!(
         "\
 fn icon(codepoint: &str) -> Text<'_> {{
-    text(codepoint).font(Font::with_name(\"{file_name}\"))
+    text(codepoint).font(\"{file_name}\")
 }}\n"
     ));
 
