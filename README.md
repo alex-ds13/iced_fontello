@@ -66,7 +66,6 @@ Finally, it will generate a type-safe `iced` API that lets you use the font. In 
 // Do not edit manually.
 // d24460a00249b2acd0ccc64c3176452c546ad12d1038974e974d7bdb4cdb4a8f
 use iced::widget::{text, Text};
-use iced::Font;
 
 pub const FONT: &[u8] = include_bytes!("../fonts/example-icons.ttf");
 
@@ -83,7 +82,7 @@ pub fn trash<'a>() -> Text<'a> {
 }
 
 fn icon<'a>(codepoint: &'a str) -> Text<'a> {
-    text(codepoint).font(Font::with_name("example-icons"))
+    text(codepoint).font("example-icons")
 }
 ```
 
