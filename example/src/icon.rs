@@ -1,6 +1,6 @@
 // Generated automatically by iced_fontello at build time.
 // Do not edit manually. Source: ../fonts/example-icons.toml
-// 98d2fe4433f22b49d44ab0e3f801adada1dfd901f77d56df8ce3cb78525fb37f
+// a97e62f97ea2e7b8c39e7b06a062e6128864bd44cdaa773927c8d3fbe6bf07c8
 use iced::widget::{Text, text};
 
 pub const FONT: &[u8] = include_bytes!("../fonts/example-icons.ttf");
@@ -13,8 +13,12 @@ pub fn iced<'a>() -> Text<'a> {
     icon("\u{E800}")
 }
 
-pub fn rust<'a>() -> Text<'a> {
+pub fn magnifier<'a>() -> Text<'a> {
     icon("\u{E801}")
+}
+
+pub fn rust<'a>() -> Text<'a> {
+    icon("\u{E802}")
 }
 
 pub fn save<'a>() -> Text<'a> {

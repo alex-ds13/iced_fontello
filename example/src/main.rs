@@ -28,6 +28,8 @@ impl Example {
                 icon::iced().size(30),
                 ", rust:",
                 icon::rust().size(30),
+                ", magnifier (stroked svg):",
+                icon::magnifier().size(30),
                 ", end!",
             ]
             .align_y(iced::Center)
