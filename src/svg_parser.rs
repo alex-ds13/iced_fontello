@@ -36,25 +36,24 @@ pub fn parse_image(icon_path: &Path, name: String, code: u64, uid: String) -> Op
         .iter()
         .for_each(|n| process_node(n, &mut path_builder));
 
-    // Finish the path builder and apply the final translate and scale transforms
+    // Scale the icon's frame (its viewBox, already mapped by usvg so the
+    // frame origin is at 0,0) onto the 1000-unit glyph grid. Normalizing the
+    // frame instead of the geometry bounds preserves the padding icon sets
+    // design into their viewBox, so glyphs keep consistent relative sizes.
     if let Some(final_path) = path_builder.finish() {
-        let bounds = final_path.bounds();
-        let scale = 1000.0 / bounds.height();
-        let svg_x = bounds.left();
-        let svg_y = bounds.top();
+        let size = usvg_tree.size();
+        let scale = 1000.0 / size.height();
 
-        // Translate and scale
         let final_path = final_path
-            .transform(Transform::from_translate(-svg_x, -svg_y).post_scale(scale, scale))
+            .transform(Transform::from_scale(scale, scale))
             .unwrap_or_else(|| {
                 panic!(
-                    "SVG icon file \"{}\" failed to apply final translate and scale transform",
+                    "SVG icon file \"{}\" failed to apply the glyph grid scale",
                     icon_path.display()
                 )
             });
 
-        let final_bounds = final_path.bounds();
-        svg_width = final_bounds.width();
+        svg_width = size.width() * scale;
 
         // Write path to string
         svg_path = write_path(final_path);
@@ -183,16 +182,33 @@ mod tests {
 
     #[test]
     fn stroke_only_line_becomes_a_filled_outline() {
+        // The viewBox is the band's exact bounds, so the frame normalization
+        // gives the same numbers the geometry would: 80x8 -> 10000x1000.
         let glyph = parse_str(
-            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 46 80 8">
                 <path d="M10 50 L90 50" stroke="black" stroke-width="8" fill="none"/>
             </svg>"#,
             "stroked_line",
         )
         .expect("stroked line should produce a glyph");
         let svg = glyph.svg.expect("glyph should carry svg path data");
-        // A 80x8 stroked line normalized to 1000 units of height is 10000 wide.
         assert!((svg.width - 10000.0).abs() < 1.0, "width was {}", svg.width);
+    }
+
+    #[test]
+    fn viewbox_padding_is_preserved() {
+        // An 18-unit drawing centered in a 24-unit frame must keep its
+        // padding: the glyph is frame-sized (square, so width 1000), not
+        // inflated to the geometry bounds (which would make it 9000 wide).
+        let glyph = parse_str(
+            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M3 12 L21 12" stroke="black" stroke-width="2" fill="none"/>
+            </svg>"#,
+            "padded_line",
+        )
+        .expect("padded stroked line should produce a glyph");
+        let svg = glyph.svg.unwrap();
+        assert!((svg.width - 1000.0).abs() < 1.0, "width was {}", svg.width);
     }
 
     #[test]
@@ -212,7 +228,7 @@ mod tests {
     #[test]
     fn non_uniform_transform_scales_the_stroke_like_svg() {
         let glyph = parse_str(
-            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100">
+            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 46 160 8">
                 <g transform="scale(2 1)">
                     <path d="M10 50 L90 50" stroke="black" stroke-width="8" fill="none"/>
                 </g>
@@ -229,7 +245,7 @@ mod tests {
     #[test]
     fn paintless_path_keeps_the_legacy_fill_behavior() {
         let glyph = parse_str(
-            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 80 40" fill="none">
                 <path d="M10 10 H90 V50 H10 Z"/>
             </svg>"#,
             "paintless_rect",
@@ -242,7 +258,7 @@ mod tests {
     #[test]
     fn fill_only_path_is_unchanged_by_stroke_support() {
         let glyph = parse_str(
-            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 80 40">
                 <rect x="10" y="10" width="80" height="40"/>
             </svg>"#,
             "filled_rect",
